@@ -5,16 +5,17 @@ An autonomous sports analytics skill and quantitative prediction engine for foot
 ## Overview
 The `match-prediction-engine` delivers rigorous match analysis, probability modeling, and expected value (+EV) identification by combining real-time public tactical intelligence with deterministic mathematical calculations.
 
-### Core Features
+### Core Capabilities
 - **Zero Paid APIs**: Uses live public intelligence, sports databases, and open stats (FBref, Understat, Flashscore, etc.).
+- **Adaptive User Directives (Never Boxed In)**:
+  - **Goals & Match Flow**: Over/Under 1.5, 2.5, 3.5, 1st Half Goals.
+  - **BTTS**: Both teams to score probability.
+  - **Corner Markets**: Team corner averages, crossing frequency, wing overloads.
+  - **Cards & Discipline**: Referee strictness, derby intensity, foul rates.
+  - **Player Props**: Shots on target, anytime goalscorer, set-piece matchups.
+  - **Accumulator / Parlay Anchors**: Ultra-high probability floors ($>75\%$) for multi-bet slips.
+  - **Value Hunter & Underdog (+EV)**: Locating mispriced lines where public bias inflates the odds.
 - **Deterministic Python Probability Model**: Implements bivariate Poisson distribution with Dixon-Coles low-score adjustments.
-- **Full Market Support**:
-  - 1X2 (Home Win, Draw, Away Win)
-  - Double Chance (1X, X2, 12)
-  - Draw No Bet (Home DNB, Away DNB)
-  - Over / Under Goals (1.5, 2.5, 3.5)
-  - Both Teams to Score (BTTS Yes / No)
-  - Exact Scoreline Ranking
 - **Expected Value (+EV) Detection**: Evaluates model probabilities against live bookmaker odds to locate mathematical market edges ($> 3\%$).
 - **Structured Prediction Dossiers**: Generates publication-ready match briefs with tactical summaries, lineup news, underlying metrics, and risk factors.
 
@@ -23,13 +24,13 @@ The `match-prediction-engine` delivers rigorous match analysis, probability mode
 ## Directory Structure
 ```
 match-prediction-engine/
-├── SKILL.md                  # Complete agent operational protocol
+├── SKILL.md                  # Complete agent operational protocol & focus modes
 ├── README.md                 # Project overview and usage guide
 ├── .gitignore
 ├── scripts/
 │   └── poisson_model.py      # Self-contained Python calculation engine
 ├── templates/
-│   └── dossier_template.md   # Standard publication format for match previews
+│   └── dossier_template.md   # Publication format with active analytical lens
 └── references/
     └── methodology.md        # Mathematical derivations and formulas
 ```

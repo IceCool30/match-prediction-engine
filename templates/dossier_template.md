@@ -3,6 +3,7 @@
 **Competition:** {COMPETITION}  
 **Date & Kickoff:** {MATCH_DATE} {KICKOFF_TIME}  
 **Venue:** {VENUE}  
+**Active Analytical Lens:** {ACTIVE_FOCUS_LENS} *(e.g., General Match Overview, Corner Lines, Disciplinary/Cards, Accumulator Anchor, Anytime Scorer)*
 
 ---
 
@@ -25,7 +26,7 @@
 | **Actual Goals Scored / 90** | {HOME_AVG_GOALS_SCORED} | {AWAY_AVG_GOALS_SCORED} |
 | **Actual Goals Conceded / 90** | {HOME_AVG_GOALS_CONCEDED} | {AWAY_AVG_GOALS_CONCEDED} |
 | **Clean Sheet Rate** | {HOME_CS_PCT}% | {AWAY_CS_PCT}% |
-| **Failed to Score Rate** | {HOME_FTS_PCT}% | {AWAY_FTS_PCT}% |
+| **Specialized Metric (Corners/Cards/Shots)** | {HOME_SPECIALIZED_STAT} | {AWAY_SPECIALIZED_STAT} |
 
 ---
 
@@ -51,13 +52,15 @@
 
 ## 4. Final Categorized Selections
 
-### 🟢 Primary Selection (Highest Statistical Floor)
+### 🟢 Primary Selection (Targeted Focus / Highest Probability Floor)
 - **Selection:** `{PRIMARY_PICK}`
+- **Market:** `{PRIMARY_MARKET}`
 - **Indicative Odds:** `{PRIMARY_ODDS}`
 - **Analytical Rationale:** {PRIMARY_RATIONALE}
 
 ### 🟡 Value Selection (+EV / Mispriced Market)
 - **Selection:** `{VALUE_PICK}`
+- **Market:** `{VALUE_MARKET}`
 - **Indicative Odds:** `{VALUE_ODDS}`
 - **Market Edge:** `{VALUE_EDGE}% edge against market price`
 - **Analytical Rationale:** {VALUE_RATIONALE}
