@@ -1,49 +1,81 @@
 # Match Prediction Dossier: {HOME_TEAM} vs {AWAY_TEAM}
 
+**Sport:** {SPORT_NAME}  
 **Competition:** {COMPETITION}  
 **Date & Kickoff:** {MATCH_DATE} {KICKOFF_TIME}  
 **Venue:** {VENUE}  
-**Active Analytical Lens:** {ACTIVE_FOCUS_LENS} *(e.g., General Match Overview, Corner Lines, Disciplinary/Cards, Accumulator Anchor, Anytime Scorer)*
+**Active Analytical Lens:** {ACTIVE_FOCUS_LENS} *(e.g., General Match Overview, Spread/Handicap, Total Points, Player Props, Accumulator Anchor)*
 
 ---
 
-## 1. Tactical Setup & Squad News
-- **{HOME_TEAM} Context:** {HOME_CONTEXT} (Form: {HOME_FORM_LAST_5})
+## 1. Context, Form & Availability
+
+- **{HOME_TEAM} Context:** {HOME_CONTEXT} (Form: {HOME_FORM_LAST_5_10})
   - Confirmed / Probable Absences: {HOME_ABSENCES}
-  - Tactical Tendency: {HOME_TACTICS}
-- **{AWAY_TEAM} Context:** {AWAY_CONTEXT} (Form: {AWAY_FORM_LAST_5})
+  - Tactical / Strategic Tendency: {HOME_TENDENCY}
+- **{AWAY_TEAM} Context:** {AWAY_CONTEXT} (Form: {AWAY_FORM_LAST_5_10})
   - Confirmed / Probable Absences: {AWAY_ABSENCES}
-  - Tactical Tendency: {AWAY_TACTICS}
-- **Days of Rest & Motivation:** {REST_MOTIVATION_NOTES}
+  - Tactical / Strategic Tendency: {AWAY_TENDENCY}
+- **Schedule, Rest & Motivation:** {REST_MOTIVATION_NOTES}
+- **Venue / Conditions Factor:** {VENUE_CONDITIONS} *(e.g., home court/field advantage, surface type, altitude, weather, neutral site)*
 
 ---
 
 ## 2. Statistical & Underlying Metrics (Last 5-10 Matches)
+
 | Metric | {HOME_TEAM} (Home) | {AWAY_TEAM} (Away) |
 | :--- | :--- | :--- |
-| **xG Created / 90** | {HOME_XG} | {AWAY_XG} |
-| **xG Conceded (xGA) / 90** | {HOME_XGA} | {AWAY_XGA} |
-| **Actual Goals Scored / 90** | {HOME_AVG_GOALS_SCORED} | {AWAY_AVG_GOALS_SCORED} |
-| **Actual Goals Conceded / 90** | {HOME_AVG_GOALS_CONCEDED} | {AWAY_AVG_GOALS_CONCEDED} |
-| **Clean Sheet Rate** | {HOME_CS_PCT}% | {AWAY_CS_PCT}% |
-| **Specialized Metric (Corners/Cards/Shots)** | {HOME_SPECIALIZED_STAT} | {AWAY_SPECIALIZED_STAT} |
+| **Primary Scoring Rate** | {HOME_SCORING_RATE} {SCORING_UNIT}/game | {AWAY_SCORING_RATE} {SCORING_UNIT}/game |
+| **Conceding Rate** | {HOME_CONCEDING_RATE} {SCORING_UNIT}/game | {AWAY_CONCEDING_RATE} {SCORING_UNIT}/game |
+| **Key Advanced Metric 1** | {HOME_ADV_METRIC_1} | {AWAY_ADV_METRIC_1} |
+| **Key Advanced Metric 2** | {HOME_ADV_METRIC_2} | {AWAY_ADV_METRIC_2} |
+| **Key Advanced Metric 3** | {HOME_ADV_METRIC_3} | {AWAY_ADV_METRIC_3} |
+| **Specialized Market Metric** | {HOME_SPECIALIZED_STAT} | {AWAY_SPECIALIZED_STAT} |
+
+*Advanced metrics are sport-specific. Examples: xG/xGA (football/hockey), ORtg/DRtg (basketball), ERA/FIP (baseball), Service game win % (tennis), Set win rate (volleyball/table tennis).*
 
 ---
 
-## 3. Mathematical Model Output (Bivariate Poisson & Dixon-Coles)
-*Calculated with zero emotional bias based on adjusted attacking and defensive ratings.*
+## 3. Mathematical Model Output
+
+**Model Used:** {MODEL_TYPE} *(Bivariate Poisson + Dixon-Coles / Standard Poisson / Normal Distribution)*  
+*Calculated with zero emotional bias based on adjusted offensive and defensive ratings.*
+
+### Match Result
 
 | Market | Outcome | Model Probability | Fair Odds | Market Odds | Expected Value (+EV) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1X2** | {HOME_TEAM} Win | {P_HOME}% | {FAIR_HOME} | {MKT_HOME} | {EV_HOME}% |
-| **1X2** | Draw | {P_DRAW}% | {FAIR_DRAW} | {MKT_DRAW} | {EV_DRAW}% |
-| **1X2** | {AWAY_TEAM} Win | {P_AWAY}% | {FAIR_AWAY} | {MKT_AWAY} | {EV_AWAY}% |
-| **Goals** | Over 2.5 Goals | {P_O25}% | {FAIR_O25} | {MKT_O25} | {EV_O25}% |
-| **Goals** | Under 2.5 Goals | {P_U25}% | {FAIR_U25} | {MKT_U25} | {EV_U25}% |
-| **BTTS** | Both Teams to Score | {P_BTTS}% | {FAIR_BTTS} | {MKT_BTTS} | {EV_BTTS}% |
-| **Double Chance**| 1X / X2 | {P_DC}% | {FAIR_DC} | {MKT_DC} | {EV_DC}% |
+| **{RESULT_MARKET}** | {HOME_TEAM} Win | {P_HOME}% | {FAIR_HOME} | {MKT_HOME} | {EV_HOME}% |
+| **{RESULT_MARKET}** | {DRAW_OR_NA} | {P_DRAW}% | {FAIR_DRAW} | {MKT_DRAW} | {EV_DRAW}% |
+| **{RESULT_MARKET}** | {AWAY_TEAM} Win | {P_AWAY}% | {FAIR_AWAY} | {MKT_AWAY} | {EV_AWAY}% |
 
-**Top 3 Modeled Exact Scorelines:**
+### Over/Under {SCORING_UNIT}
+
+| Line | Over | Under |
+| :--- | :--- | :--- |
+| {OU_LINE_1} | {P_OVER_1}% (Fair: {FAIR_OVER_1}) | {P_UNDER_1}% (Fair: {FAIR_UNDER_1}) |
+| {OU_LINE_2} | {P_OVER_2}% (Fair: {FAIR_OVER_2}) | {P_UNDER_2}% (Fair: {FAIR_UNDER_2}) |
+| {OU_LINE_3} | {P_OVER_3}% (Fair: {FAIR_OVER_3}) | {P_UNDER_3}% (Fair: {FAIR_UNDER_3}) |
+
+### Spread / Handicap
+
+| Line | Cover Probability | Fair Odds |
+| :--- | :--- | :--- |
+| {HOME_TEAM} {SPREAD_1} | {P_SPREAD_1}% | {FAIR_SPREAD_1} |
+| {HOME_TEAM} {SPREAD_2} | {P_SPREAD_2}% | {FAIR_SPREAD_2} |
+| {HOME_TEAM} {SPREAD_3} | {P_SPREAD_3}% | {FAIR_SPREAD_3} |
+
+<!-- Include BTTS section only for football, ice hockey, baseball, handball -->
+### Both Teams to Score *(if applicable)*
+
+| Outcome | Model Probability | Fair Odds | Market Odds | EV |
+| :--- | :--- | :--- | :--- | :--- |
+| BTTS Yes | {P_BTTS_YES}% | {FAIR_BTTS_YES} | {MKT_BTTS_YES} | {EV_BTTS_YES}% |
+| BTTS No | {P_BTTS_NO}% | {FAIR_BTTS_NO} | {MKT_BTTS_NO} | {EV_BTTS_NO}% |
+
+<!-- Include top scorelines for Poisson-model sports only -->
+### Top Modeled Exact Scorelines *(Poisson model sports)*
+
 1. **{SCORE_1}** ({P_SCORE_1}%)
 2. **{SCORE_2}** ({P_SCORE_2}%)
 3. **{SCORE_3}** ({P_SCORE_3}%)
@@ -65,11 +97,11 @@
 - **Market Edge:** `{VALUE_EDGE}% edge against market price`
 - **Analytical Rationale:** {VALUE_RATIONALE}
 
-### 🎯 Statistically Most Probable Scoreline
-- **Prediction:** `{SCORELINE_PICK}`
+### 🎯 Most Probable Outcome / Scoreline
+- **Prediction:** `{OUTCOME_PICK}`
 
 ---
 
 ## 5. Risk Factors & Invalidation Checklist
 - **Key Vulnerability:** {KEY_RISK_SCENARIO}
-- **Invalidation Condition:** What late event before kickoff breaks this bet (e.g. late benching of key midfielder, sudden pitch weather shift).
+- **Invalidation Condition:** {INVALIDATION_TRIGGER} *(e.g., late lineup change, pitcher scratch, key player ruled out, weather shift, venue change)*
