@@ -1,6 +1,6 @@
 ---
 name: match-prediction-engine
-description: "Multi-sport quantitative prediction engine. Operates with zero paid APIs by combining live public intelligence, statistical analysis, and mathematical modeling (Poisson / Normal distribution) across football, basketball, ice hockey, tennis, table tennis, baseball, American football, rugby, handball, volleyball, and cricket. Delivers verified prediction dossiers with expected value (+EV) calculations across all major betting markets."
+description: Multi-sport quantitative prediction engine. Operates with zero paid APIs by combining live public intelligence, statistical analysis, and mathematical modeling (Poisson / Normal distribution) across football, basketball, ice hockey, tennis, table tennis, baseball, American football, rugby, handball, volleyball, and cricket. Delivers verified prediction dossiers with expected value (+EV) calculations across all major betting markets.
 ---
 
 # Match Prediction Engine
