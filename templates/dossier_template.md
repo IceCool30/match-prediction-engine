@@ -75,6 +75,24 @@
 | BTTS Yes | {P_BTTS_YES}% | {FAIR_BTTS_YES} | {MKT_BTTS_YES} | {EV_BTTS_YES}% |
 | BTTS No | {P_BTTS_NO}% | {FAIR_BTTS_NO} | {MKT_BTTS_NO} | {EV_BTTS_NO}% |
 
+<!-- Include for Tennis & Table Tennis fixtures -->
+### Tennis / Table Tennis Set & Game Breakdown *(if applicable)*
+
+| Market / Line | Outcome | Model Probability | Fair Odds | Market Odds | EV | AAI |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Set Betting (Exact) | {SET_SCORE_1} | {P_SET_1}% | {FAIR_SET_1} | {MKT_SET_1} | {EV_SET_1}% | - |
+| Set Handicap | {PLAYER_1} {SET_HANDICAP_1} | {P_SH_1}% | {FAIR_SH_1} | {MKT_SH_1} | {EV_SH_1}% | {AAI_SH_1} |
+| Player Set Win | {PLAYER_1} to win a set | {P_WIN_SET_1}% | {FAIR_WS_1} | {MKT_WS_1} | {EV_WS_1}% | {AAI_WS_1} |
+| Total Sets/Games | Over {TOTAL_LINE} | {P_TOTAL_O}% | {FAIR_TO} | {MKT_TO} | {EV_TO}% | {AAI_TO} |
+
+### Audited Exotic & Slip Selections *(Combos, Team Totals, Bands, Periods)*
+
+| Option / Ticket Query | Model Prob | Fair Odds | Bookmaker Odds | Implied Prob | EV (+EV) | AAI | Parlay Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **{EXOTIC_QUERY_1}** | {P_EXOTIC_1}% | {FAIR_EX_1} | {MKT_EX_1} | {IMP_EX_1}% | {EV_EX_1}% | {AAI_EX_1} | {STATUS_EX_1} |
+| **{EXOTIC_QUERY_2}** | {P_EXOTIC_2}% | {FAIR_EX_2} | {MKT_EX_2} | {IMP_EX_2}% | {EV_EX_2}% | {AAI_EX_2} | {STATUS_EX_2} |
+| **{EXOTIC_QUERY_3}** | {P_EXOTIC_3}% | {FAIR_EX_3} | {MKT_EX_3} | {IMP_EX_3}% | {EV_EX_3}% | {AAI_EX_3} | {STATUS_EX_3} |
+
 <!-- Include top scorelines for Poisson-model sports only -->
 ### Top Modeled Exact Scorelines *(Poisson model sports)*
 

@@ -233,10 +233,28 @@ python3 /data/data/com.termux/files/home/.agents/skills/match-prediction-engine/
   --away-attack <SCORING_RATE> --away-defense <CONCEDE_RATE>
 ```
 
-**Arbitrary Custom Lines:**
+**Auditing Arbitrary Screenshot / Slip Markets (SportyBet Exotics):**
+Pass any selection visible in screenshots or slips directly via `--odds-line "MARKET_NAME:ODDS"` or query model probability without odds via `--market-query "MARKET_NAME"`:
 ```bash
-python3 ... --odds-line "1h_under_82_5:1.64" --odds-line "home_+7_5:1.90"
+python3 /data/data/com.termux/files/home/.agents/skills/match-prediction-engine/scripts/poisson_model.py \
+  --sport football \
+  --home "<HOME_TEAM>" --away "<AWAY_TEAM>" \
+  --home-xg <HOME_XG> --away-xg <AWAY_XG> \
+  --odds-home <H_ODDS> --odds-draw <D_ODDS> --odds-away <A_ODDS> \
+  --odds-line "1X & Under 3.5:1.55" \
+  --odds-line "Away Under 1.5:1.32" \
+  --odds-line "1-3 Goals:1.42" \
+  --odds-line "Home Win to Nil:2.85" \
+  --market-query "2-4 Goals"
 ```
+
+The engine automatically parses and models:
+- **Combos**: `1X & Under 3.5`, `Home Win & Over 1.5`, `BTTS Yes & Over 2.5`, `12 & Under 4.5`, etc.
+- **Team Individual Totals**: `Home Over 1.5`, `Away Under 1.5`, `Home Under 0.5`.
+- **Multi-Goal Bands**: `0-1 Goals`, `1-2 Goals`, `1-3 Goals`, `2-3 Goals`, `2-4 Goals`, `3-5 Goals`.
+- **Win to Nil**: `Home Win to Nil`, `Away Win to Nil`.
+- **Tennis & Table Tennis**: `Player 1 to win a set`, `Player 2 +1.5 sets`, `P1 -1.5 games`, `Over 3.5 sets`.
+- **Basketball**: `1st Half Under 82.5`, `Home +7.5 spread`, `Away Over 78.5`.
 
 ### Step 5: De-vigging, Value (+EV), and Accumulator Anchor (AAI) Synthesis
 1. **De-vigging (Market Overround)**:

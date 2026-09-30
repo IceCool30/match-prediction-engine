@@ -51,7 +51,8 @@ def _football_profile() -> Dict[str, Any]:
         "markets": [
             "1x2", "double_chance", "draw_no_bet", "over_under",
             "btts", "clean_sheet", "exact_score", "half_time_full_time",
-            "corners", "cards", "player_props", "asian_handicap"
+            "corners", "cards", "player_props", "asian_handicap",
+            "combos", "goal_bands", "team_totals", "win_to_nil", "odd_even"
         ],
         "labels": {
             "score": "goals",
@@ -269,27 +270,27 @@ def _tennis_profile() -> Dict[str, Any]:
     return {
         "name": "Tennis",
         "scoring_unit": "games",
-        "model": "poisson",
+        "model": "tennis",
         "rho": 0.0,
         "max_score": 13,  # Max games in a set
-        "default_home_avg": 5.8,  # Service games won per set (server)
-        "default_away_avg": 5.2,
+        "default_home_avg": 6.0,  # Expected games per set
+        "default_away_avg": 4.8,
         "has_draw": False,
         "has_btts": False,
         "has_clean_sheet": False,
-        "ou_lines": [8.5, 9.5, 10.5, 11.5, 12.5, 20.5, 21.5, 22.5],
-        "spread_lines": [-5.5, -4.5, -3.5, -2.5, -1.5, 1.5, 2.5, 3.5, 4.5, 5.5],
+        "ou_lines": [19.5, 20.5, 21.5, 22.5, 23.5, 24.5],
+        "spread_lines": [-4.5, -3.5, -2.5, -1.5, 1.5, 2.5, 3.5, 4.5],
         "markets": [
             "match_winner", "set_betting", "total_games",
             "set_handicap", "game_handicap", "tiebreak",
-            "first_set_winner", "player_props"
+            "first_set_winner", "player_to_win_set", "total_sets"
         ],
         "labels": {
             "score": "games",
             "home_score": "Player 1 Games",
             "away_score": "Player 2 Games",
             "total_score": "Total Games",
-            "expected": "Expected Games Won",
+            "expected": "Expected Games Per Set",
             "result": "Match Winner",
         },
         "stat_sources": [
@@ -317,7 +318,7 @@ def _table_tennis_profile() -> Dict[str, Any]:
     return {
         "name": "Table Tennis",
         "scoring_unit": "points",
-        "model": "poisson",
+        "model": "table_tennis",
         "rho": 0.0,
         "max_score": 15,  # Per game, can go to deuce beyond 11
         "default_home_avg": 11.0,
@@ -325,12 +326,12 @@ def _table_tennis_profile() -> Dict[str, Any]:
         "has_draw": False,
         "has_btts": False,
         "has_clean_sheet": False,
-        "ou_lines": [3.5, 4.5],  # Total games in match
-        "spread_lines": [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5],
+        "ou_lines": [71.5, 73.5, 74.5, 75.5, 77.5],  # Total match points
+        "spread_lines": [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5],  # Sets handicap
         "markets": [
-            "match_winner", "total_games", "game_handicap",
-            "correct_score_games", "point_handicap",
-            "odd_even_games"
+            "match_winner", "set_betting", "set_handicap",
+            "total_sets", "total_points", "first_set_winner",
+            "player_to_win_set"
         ],
         "labels": {
             "score": "points",
@@ -354,7 +355,8 @@ def _table_tennis_profile() -> Dict[str, Any]:
             "Surface / ball type adaptation"
         ],
         "focus_modes": [
-            "match_winner", "total_games", "game_handicap",
+            "match_winner", "set_betting", "set_handicap",
+            "total_sets", "total_points",
             "accumulator_anchor", "value_hunter"
         ],
     }

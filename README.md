@@ -24,14 +24,16 @@ The `match-prediction-engine` delivers rigorous match analysis, probability mode
 
 ### Core Capabilities
 - **Zero Paid APIs**: Uses live public intelligence, sports databases, and open stats.
-- **Adaptive Sport Detection**: Automatically configures model type, markets, and metrics per sport.
-- **Dual Mathematical Models**:
-  - **Poisson + Dixon-Coles**: For low/mid-scoring discrete-event sports (football, hockey, baseball)
-  - **Normal (Gaussian)**: For high-scoring sports (basketball, American football, rugby)
-- **Sport-Conditional Markets**: Only outputs markets that exist for the sport — no BTTS for tennis, no draws for basketball.
-- **Expected Value (+EV) Detection**: Evaluates model probabilities against live bookmaker odds to locate mathematical market edges (> 3%).
+- **Adaptive Multi-Sport Engine**: 11 sports supported natively (Football, Basketball, Tennis, Table Tennis, Ice Hockey, Baseball, American Football, Rugby, Handball, Volleyball, Cricket).
+- **Rigorous Mathematical Foundations**:
+  - **Poisson + Dixon-Coles**: Low/mid-scoring discrete sports with correlation adjustment.
+  - **Markov Chain Models**: Closed-form game-to-set tennis modeling & deuce-adjusted table tennis combinatorics.
+  - **Normal (Gaussian)**: High-scoring distributions (NBA, FIBA, NCAA, NFL, Rugby, Cricket).
+- **Universal Market Matcher**: Dynamically evaluates ANY betting option or screenshot query via `--odds-line "MARKET:ODDS"` or `--market-query "MARKET"` (Combos, DC & Totals, Goal Bands, Win to Nil, Team Totals, Set Handicaps, Player Set wins, etc.).
+- **Accumulator Anchor Index (AAI 0–100)**: Evaluates options for high-stake parlay tickets, enforcing an ultra-high survival floor ($\ge 75-80\%$) and distribution tail buffer.
+- **Expected Value (+EV) Detection**: Evaluates true model probabilities against bookmaker odds to locate edges (> 3%).
 - **Structured Prediction Dossiers**: Generates publication-ready match briefs with sport-appropriate metrics and risk factors.
-- **Backward Compatible**: All existing football commands work unchanged.
+- **Backward Compatible**: All existing commands work seamlessly.
 
 ---
 
@@ -162,15 +164,46 @@ python3 scripts/poisson_model.py \
   --odds-away 2.50
 ```
 
-### Arbitrary Custom Market Odds
+### Exotic Markets & SportyBet Slip Auditing
+Evaluate any arbitrary option seen on a bet slip or screenshot via `--odds-line "MARKET:ODDS"` or query model probability with `--market-query "MARKET"`:
+
+#### Football Combos, Team Totals & Goal Bands
+```bash
+python3 scripts/poisson_model.py \
+  --sport football \
+  --home "Arsenal" --away "Chelsea" \
+  --home-xg 1.85 --away-xg 1.15 \
+  --odds-line "1X & Under 3.5:1.55" \
+  --odds-line "Away Under 1.5:1.32" \
+  --odds-line "1-3 Goals:1.45" \
+  --market-query "Home Win to Nil"
+```
+
+#### Tennis Set Handicaps & Player Sets
+```bash
+python3 scripts/poisson_model.py \
+  --sport tennis \
+  --home "Sinner" --away "Medvedev" \
+  --home-xg 5.8 --away-xg 5.1 \
+  --odds-line "Player 1 to win a set:1.18" \
+  --odds-line "Player 2 +1.5 sets:1.52"
+```
+
+#### Table Tennis & Basketball Period/Spreads
+```bash
+python3 scripts/poisson_model.py \
+  --sport table_tennis \
+  --home "Ma Long" --away "Fan Zhendong" \
+  --home-xg 11.2 --away-xg 10.5 \
+  --odds-line "Over 3.5 sets:1.35" \
+  --odds-line "Player 1 -1.5 sets:1.95"
+```
 ```bash
 python3 scripts/poisson_model.py \
   --sport basketball \
   --league-format fiba \
-  --home "Avtodor" \
-  --away "Uralmash" \
-  --home-xg 73.5 \
-  --away-xg 83.5 \
+  --home "Avtodor" --away "Uralmash" \
+  --home-xg 73.5 --away-xg 83.5 \
   --odds-line "1h_under_82_5:1.64" \
   --odds-line "home_+7_5:1.90"
 ```

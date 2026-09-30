@@ -253,3 +253,127 @@ Empirical period scoring distributions differ from simple halves:
   * Standard deviation: $\sigma_{1H} = \sigma_{FT} \times \sqrt{0.485} \approx 0.70 \times \sigma_{FT}$
   * 2nd Half: $\approx 51.5\%$ of full-time points (due to late-game tactical intentional fouls and free throw frequency)
 
+---
+
+## 11. Tennis Markov Probability Modeling
+
+Tennis scoring possesses a hierarchical nested structure: points $\to$ games $\to$ sets $\to$ match. Computing match odds from game win probabilities requires Markov combinatorics rather than naive independent counting.
+
+### Game-to-Set Closed-Form Markov Model
+Let $p$ be the probability that Player 1 wins a game on court. A set is won by the first player to reach 6 games with a 2-game advantage, or at 7-6 via tiebreak:
+
+1. **Winning before 5–5 (6–0, 6–1, 6–2, 6–3, 6–4)**:
+   $$P_{\text{win } < 5-5} = \sum_{k=0}^4 \binom{5 + k}{k} p^6 (1 - p)^k$$
+
+2. **Reaching 5–5**:
+   $$P_{5-5} = \binom{10}{5} p^5 (1 - p)^5$$
+
+3. **Outcome from 5–5**:
+   From 5–5, Player 1 wins the set directly at 7–5 with probability $p^2$, Player 2 wins at 5–7 with $(1 - p)^2$, and the set proceeds to a 6–6 tiebreak with probability $2 p (1 - p)$.
+
+4. **Tiebreak Probability**:
+   Modeling the 7-point tiebreak with slight server advantage compression:
+   $$p_{tb} \approx \frac{p^{1.1}}{p^{1.1} + (1 - p)^{1.1}}$$
+
+5. **Overall Set Win Probability ($P_{\text{set}}$)**:
+   $$P_{\text{set}} = P_{\text{win } < 5-5} + P_{5-5} \left[ p^2 + 2p(1 - p) p_{tb} \right]$$
+
+### Match Set-Score Distribution (Best-of-3)
+* **2–0**: $P(2-0) = P_{\text{set}}^2$
+* **2–1**: $P(2-1) = 2 \cdot P_{\text{set}}^2 (1 - P_{\text{set}})$
+* **0–2**: $P(0-2) = (1 - P_{\text{set}})^2$
+* **1–2**: $P(1-2) = 2 \cdot (1 - P_{\text{set}})^2 P_{\text{set}}$
+* **Match Win**: $P(\text{Match Win}) = P(2-0) + P(2-1)$
+* **Player to Win At Least 1 Set**:
+  $$P(\text{P1 Win }\ge 1\text{ Set}) = 1 - P(0-2) = P(2-0) + P(2-1) + P(1-2)$$
+
+### Best-of-5 Matches (Grand Slams)
+* **3–0**: $P(3-0) = P_{\text{set}}^3$
+* **3–1**: $P(3-1) = 3 P_{\text{set}}^3 (1 - P_{\text{set}})$
+* **3–2**: $P(3-2) = 6 P_{\text{set}}^3 (1 - P_{\text{set}})^2$
+* Symmetric formulas apply for Player 2.
+
+### Set Handicaps & Game Margins
+* **Set Handicap (+1.5)**: Equivalent to winning $\ge 1$ set ($1 - P(0-2)$ in Bo3).
+* **Set Handicap (-1.5)**: Equivalent to winning in straight sets ($P(2-0)$ in Bo3).
+* **Total Games Mixture Model**: Expected games per set are conditioned on scorelines ($\approx 8.3$ in straight sets, $\approx 9.6$ in deciders), yielding precise Over/Under game lines.
+
+---
+
+## 12. Table Tennis Deuce-Adjusted Markov Point-to-Game Model
+
+Table tennis games are played to 11 points, requiring a 2-point margin. At 10–10, play enters deuce.
+
+### Closed-Form Game Probability
+Let $p = \frac{\lambda_{P1}}{\lambda_{P1} + \lambda_{P2}}$ be the point-win probability for Player 1.
+
+1. **Winning before Deuce (11–0 through 11–9)**:
+   $$P_{\text{win } < 10-10} = \sum_{k=0}^9 \binom{10 + k}{k} p^{11} (1 - p)^k$$
+
+2. **Reaching Deuce (10–10)**:
+   $$P_{10-10} = \binom{20}{10} p^{10} (1 - p)^{10}$$
+
+3. **Deuce Resolution via Infinite Absorbing Markov Chain**:
+   From 10–10, Player 1 wins by scoring 2 consecutive points ($p^2$), Player 2 wins with $(1 - p)^2$, and deuce repeats with $2 p (1 - p)$. Summing the infinite geometric series:
+   $$P(\text{Win} \mid \text{Deuce}) = \sum_{n=0}^{\infty} p^2 [2p(1 - p)]^n = \frac{p^2}{1 - 2p(1 - p)} = \frac{p^2}{p^2 + (1 - p)^2}$$
+
+4. **Total Game Win Probability ($P_{\text{game}}$)**:
+   $$P_{\text{game}} = P_{\text{win } < 10-10} + P_{10-10} \times \frac{p^2}{p^2 + (1 - p)^2}$$
+
+### Best-of-5 Match Combinatorics
+Matches are first to 3 games:
+* $P(3-0) = P_{\text{game}}^3$
+* $P(3-1) = 3 P_{\text{game}}^3 (1 - P_{\text{game}})$
+* $P(3-2) = 6 P_{\text{game}}^3 (1 - P_{\text{game}})^2$
+* Set Handicap $\pm 1.5$ and $\pm 2.5$ directly sum these disjoint exact scoreline paths.
+
+---
+
+## 13. Football Joint Distributions & Exotic Market Combinatorics
+
+Bookmakers offer intricate exotic combinations (e.g. SportyBet combos). Because the engine computes the full $(N+1) \times (N+1)$ Dixon-Coles scoreline matrix $P(H=h, A=a)$, all derived markets are calculated with mathematical exactness:
+
+### Double Chance & Over/Under Combos
+Let $S_{1X} = \{(h, a) \mid h \ge a\}$, $S_{X2} = \{(h, a) \mid a \ge h\}$, $S_{12} = \{(h, a) \mid h \ne a\}$.
+For any goal line $L$:
+$$P(\text{1X \& Under } L) = \sum_{(h, a) \in S_{1X}, h+a < L} P(H=h, A=a)$$
+$$P(\text{1X \& Over } L) = \sum_{(h, a) \in S_{1X}, h+a > L} P(H=h, A=a)$$
+$$P(\text{X2 \& Under } L) = \sum_{(h, a) \in S_{X2}, h+a < L} P(H=h, A=a)$$
+$$P(\text{X2 \& Over } L) = \sum_{(h, a) \in S_{X2}, h+a > L} P(H=h, A=a)$$
+
+### Match Result & Both Teams to Score (1X2 & BTTS)
+$$P(\text{Home Win \& BTTS Yes}) = \sum_{h > a, a \ge 1} P(H=h, A=a)$$
+$$P(\text{Home Win \& BTTS No}) = \sum_{h \ge 1} P(H=h, A=0)$$
+
+### Win to Nil
+$$P(\text{Home Win to Nil}) = \sum_{h=1}^N P(H=h, A=0)$$
+$$P(\text{Away Win to Nil}) = \sum_{a=1}^N P(H=0, A=a)$$
+
+### Multi-Goal Bands
+For any band $[L_{\min}, L_{\max}]$:
+$$P(\text{Goals } L_{\min}\text{--}L_{\max}) = \sum_{t = L_{\min}}^{L_{\max}} \left[ \sum_{h + a = t} P(H=h, A=a) \right]$$
+Common bands calculated: `0-1`, `1-2`, `1-3`, `2-3`, `2-4`, `2-5`, `3-4`, `3-5`, `4-6`, `7+`.
+
+### Team Individual Totals
+$$P(\text{Home Over } L) = \sum_{h > L} P(H=h) = 1 - \sum_{h \le \lfloor L \rfloor} P(H=h)$$
+$$P(\text{Away Under } L) = \sum_{a < L} P(A=a) = \sum_{a \le \lfloor L \rfloor} P(A=a)$$
+
+---
+
+## 14. Universal Market Matcher & Arbitrary Query Resolution Engine
+
+To support real-time ticket and screenshot auditing from bookmakers like SportyBet, the engine incorporates `match_arbitrary_market(query, odds, probabilities, sport)`.
+
+### Resolution Pipeline
+1. **Query Normalization**: Standardizes punctuation, whitespace, and team alias identifiers (`home`, `away`, `1`, `2`, `x`, team names).
+2. **Regex Parsing**: Maps natural queries (e.g. `"1X & Under 3.5"`, `"Away Under 1.5"`, `"P1 to win a set"`, `"2-3 Goals"`, `"P2 +1.5 sets"`) to deterministic probability functions.
+3. **Quantitative Metrics Generation**:
+   * Evaluates exact model probability $P_{\text{model}}$
+   * Computes fair odds: $\text{Odds}_{\text{fair}} = 1 / P_{\text{model}}$
+   * If bookmaker odds are supplied:
+     * Computes implied probability $P_{\text{implied}} = 1 / \text{Odds}_{\text{mkt}}$
+     * Computes expected value: $\text{EV (\%)} = (P_{\text{model}} \times \text{Odds}_{\text{mkt}} - 1) \times 100$
+     * Calculates the Accumulator Anchor Index (AAI: 0–100)
+4. **Anchor Promotion**: Audited selections with high probability floors ($P \ge 75\%$) and elite AAI scores ($\ge 85$) compete alongside standard lines for the primary accumulator recommendation, ensuring users receive the mathematically safest possible ticket leg.
+
+

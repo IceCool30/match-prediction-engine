@@ -57,6 +57,67 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(rec["accumulator_anchor"]["selection"], "Under 168.5")
         self.assertGreaterEqual(rec["accumulator_anchor"]["aai_score"], 85.0)
 
+    def test_tennis_cli(self):
+        res = self.run_cmd([
+            "--sport", "tennis",
+            "--home", "Djokovic", "--away", "Alcaraz",
+            "--home-xg", "6.2", "--away-xg", "4.8",
+            "--odds-home", "1.45", "--odds-away", "2.80",
+            "--odds-line", "Player 1 to win a set:1.15",
+            "--json"
+        ])
+        self.assertEqual(res.returncode, 0)
+        data = json.loads(res.stdout)
+        self.assertEqual(data["sport_model"], "tennis")
+        self.assertIn("set_betting", data)
+        self.assertIn("set_handicap", data)
+        self.assertIn("audited_options", data)
+        self.assertIn("Player 1 to win a set", data["audited_options"])
+        rec = data["recommendations"]
+        self.assertIn("accumulator_anchor", rec)
+        self.assertEqual(rec["accumulator_anchor"]["selection"], "Player 1 to win a set")
+        self.assertGreaterEqual(rec["accumulator_anchor"]["aai_score"], 85.0)
+
+    def test_table_tennis_cli(self):
+        res = self.run_cmd([
+            "--sport", "table_tennis",
+            "--home", "Fan", "--away", "Wang",
+            "--home-xg", "11.2", "--away-xg", "9.8",
+            "--odds-home", "1.55", "--odds-away", "2.45",
+            "--odds-line", "Player 1 to win a set:1.08",
+            "--json"
+        ])
+        self.assertEqual(res.returncode, 0)
+        data = json.loads(res.stdout)
+        self.assertEqual(data["sport_model"], "table_tennis")
+        self.assertIn("set_betting", data)
+        self.assertIn("set_handicap", data)
+        self.assertIn("audited_options", data)
+        rec = data["recommendations"]
+        self.assertIn("accumulator_anchor", rec)
+        self.assertEqual(rec["accumulator_anchor"]["selection"], "Player 1 to win a set")
+
+    def test_football_exotic_cli(self):
+        res = self.run_cmd([
+            "--sport", "football",
+            "--home", "Arsenal", "--away", "Chelsea",
+            "--home-xg", "2.10", "--away-xg", "0.80",
+            "--odds-line", "Away Under 1.5:1.36",
+            "--odds-line", "1X & Under 3.5:1.58",
+            "--json"
+        ])
+        self.assertEqual(res.returncode, 0)
+        data = json.loads(res.stdout)
+        self.assertEqual(data["sport_model"], "poisson")
+        self.assertIn("combos", data)
+        self.assertIn("goal_bands", data)
+        self.assertIn("audited_options", data)
+        self.assertIn("Away Under 1.5", data["audited_options"])
+        rec = data["recommendations"]
+        self.assertIn("accumulator_anchor", rec)
+        self.assertEqual(rec["accumulator_anchor"]["selection"], "Away Under 1.5")
+
 
 if __name__ == "__main__":
     unittest.main()
+
