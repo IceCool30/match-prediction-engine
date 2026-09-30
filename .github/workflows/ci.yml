@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Run Test Suite
+      run: |
+        python -m unittest discover -s tests -p "test_*.py" -v
+
+    - name: Test CLI Execution
+      run: |
+        python scripts/poisson_model.py --list-sports
+        python scripts/poisson_model.py --sport football --home "Arsenal" --away "Chelsea" --home-xg 1.85 --away-xg 1.15 --json
+        python scripts/poisson_model.py --sport basketball --league-format fiba --home "Avtodor" --away "Uralmash" --home-xg 73.5 --away-xg 83.5 --ou-odds "154.5:1.43:2.65,168.5:2.70:1.41" --json

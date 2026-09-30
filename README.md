@@ -71,20 +71,36 @@ python3 scripts/poisson_model.py \
   --odds-home 1.70 \
   --odds-draw 3.80 \
   --odds-away 4.50 \
-  --odds-o25 1.75 \
+  --ou-odds "1.5:1.30:3.40,2.5:1.75:2.10,3.5:2.90:1.42" \
   --odds-btts-yes 1.75
 ```
 
-### Basketball
+### Basketball (FIBA / European / 40-Min)
 ```bash
 python3 scripts/poisson_model.py \
   --sport basketball \
+  --league-format fiba \
+  --home "Avtodor Saratov" \
+  --away "BK Uralmash" \
+  --home-xg 73.5 \
+  --away-xg 83.5 \
+  --odds-home 3.80 \
+  --odds-away 1.23 \
+  --ou-odds "154.5:1.43:2.65,160.5:1.80:1.91,166.5:2.40:1.50,168.5:2.70:1.41"
+```
+
+### Basketball (NBA / 48-Min)
+```bash
+python3 scripts/poisson_model.py \
+  --sport basketball \
+  --league-format nba \
   --home "Lakers" \
   --away "Celtics" \
   --home-xg 112.5 \
   --away-xg 108.0 \
   --odds-home 1.90 \
-  --odds-away 1.95
+  --odds-away 1.95 \
+  --ou-odds "215.5:1.90:1.90,220.5:2.10:1.75"
 ```
 
 ### Ice Hockey
@@ -146,27 +162,17 @@ python3 scripts/poisson_model.py \
   --odds-away 2.50
 ```
 
-### Using Attack & Defense Ratings (Any Sport)
-```bash
-python3 scripts/poisson_model.py \
-  --sport football \
-  --home "Real Madrid" \
-  --away "Barcelona" \
-  --home-attack 2.20 \
-  --home-defense 0.85 \
-  --away-attack 2.10 \
-  --away-defense 1.10
-```
-
-### Custom Over/Under Lines
+### Arbitrary Custom Market Odds
 ```bash
 python3 scripts/poisson_model.py \
   --sport basketball \
-  --home "Warriors" \
-  --away "Suns" \
-  --home-xg 115 \
-  --away-xg 112 \
-  --ou-lines "215.5,220.5,225.5,230.5"
+  --league-format fiba \
+  --home "Avtodor" \
+  --away "Uralmash" \
+  --home-xg 73.5 \
+  --away-xg 83.5 \
+  --odds-line "1h_under_82_5:1.64" \
+  --odds-line "home_+7_5:1.90"
 ```
 
 ### JSON Output
@@ -181,5 +187,15 @@ python3 scripts/poisson_model.py \
 
 ---
 
+## Running Automated Tests
+
+Run the full pure-standard-library unit test suite locally:
+```bash
+python3 -m unittest discover -s tests -p "test_*.py" -v
+```
+
+---
+
 ## License
 MIT
+

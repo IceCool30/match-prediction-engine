@@ -80,9 +80,9 @@ def _football_profile() -> Dict[str, Any]:
     }
 
 
-def _basketball_profile() -> Dict[str, Any]:
+def _basketball_profile(league_format: str = "nba") -> Dict[str, Any]:
     return {
-        "name": "Basketball",
+        "name": "Basketball (NBA / 48-Min)",
         "scoring_unit": "points",
         "model": "normal",
         "rho": 0.0,
@@ -109,7 +109,6 @@ def _basketball_profile() -> Dict[str, Any]:
         "stat_sources": [
             "Basketball Reference (basketball-reference.com)",
             "NBA Stats (nba.com/stats)", "ESPN (espn.com)",
-            "EuroLeague Stats (euroleaguebasketball.net)",
             "Flashscore (flashscore.com)", "SofaScore (sofascore.com)"
         ],
         "key_metrics": [
@@ -125,6 +124,96 @@ def _basketball_profile() -> Dict[str, Any]:
             "quarter_totals", "player_props_points",
             "player_props_rebounds", "player_props_assists",
             "accumulator_anchor", "value_hunter"
+        ],
+    }
+
+
+def _basketball_fiba_profile() -> Dict[str, Any]:
+    return {
+        "name": "Basketball (FIBA / EuroLeague / VTB / 40-Min)",
+        "scoring_unit": "points",
+        "model": "normal",
+        "rho": 0.0,
+        "max_score": 160,
+        "default_home_avg": 81.5,
+        "default_away_avg": 78.0,
+        "has_draw": False,
+        "has_btts": False,
+        "has_clean_sheet": False,
+        "ou_lines": [148.5, 152.5, 156.5, 160.5, 164.5, 168.5, 172.5],
+        "spread_lines": [-10.5, -7.5, -5.5, -3.5, -1.5, 1.5, 3.5, 5.5, 7.5, 10.5],
+        "markets": [
+            "moneyline", "spread", "over_under", "quarter_totals",
+            "half_totals", "player_props", "race_to_points"
+        ],
+        "labels": {
+            "score": "points",
+            "home_score": "Home Points",
+            "away_score": "Away Points",
+            "total_score": "Total Points",
+            "expected": "Expected Points",
+            "result": "Moneyline Outcome",
+        },
+        "stat_sources": [
+            "EuroLeague Stats (euroleaguebasketball.net)",
+            "VTB United League (vtb-league.com)",
+            "ACB (acb.com)", "Flashscore (flashscore.com)", "SofaScore (sofascore.com)",
+            "Basketball Reference (basketball-reference.com)"
+        ],
+        "key_metrics": [
+            "Offensive Rating (ORtg) per 100 possessions",
+            "Defensive Rating (DRtg) per 100 possessions",
+            "Pace (possessions per 40 minutes)",
+            "Effective Field Goal % (eFG%)",
+            "Turnover rate", "Rebound rate (ORB% / DRB%)",
+            "Free throw rate", "3-point attempt rate and accuracy"
+        ],
+        "focus_modes": [
+            "moneyline", "spread", "total_points",
+            "quarter_totals", "half_totals", "accumulator_anchor", "value_hunter"
+        ],
+    }
+
+
+def _basketball_ncaa_profile() -> Dict[str, Any]:
+    return {
+        "name": "Basketball (NCAA Men's College / 40-Min)",
+        "scoring_unit": "points",
+        "model": "normal",
+        "rho": 0.0,
+        "max_score": 150,
+        "default_home_avg": 73.5,
+        "default_away_avg": 69.0,
+        "has_draw": False,
+        "has_btts": False,
+        "has_clean_sheet": False,
+        "ou_lines": [132.5, 136.5, 140.5, 144.5, 148.5, 152.5],
+        "spread_lines": [-12.5, -9.5, -6.5, -3.5, -1.5, 1.5, 3.5, 6.5, 9.5, 12.5],
+        "markets": [
+            "moneyline", "spread", "over_under", "half_totals", "accumulator_anchor"
+        ],
+        "labels": {
+            "score": "points",
+            "home_score": "Home Points",
+            "away_score": "Away Points",
+            "total_score": "Total Points",
+            "expected": "Expected Points",
+            "result": "Moneyline Outcome",
+        },
+        "stat_sources": [
+            "KenPom (kenpom.com)", "BartTorvik (barttorvik.com)",
+            "NCAA Stats (ncaa.com)", "ESPN (espn.com)", "Sports Reference CBB"
+        ],
+        "key_metrics": [
+            "Adjusted Offensive Efficiency (AdjO)",
+            "Adjusted Defensive Efficiency (AdjD)",
+            "Adjusted Tempo (Pace)",
+            "Effective FG% (Offense vs Defense)",
+            "Turnover %", "Offensive Rebound %"
+        ],
+        "focus_modes": [
+            "moneyline", "spread", "total_points",
+            "half_totals", "accumulator_anchor", "value_hunter"
         ],
     }
 
@@ -556,15 +645,27 @@ def _cricket_profile() -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 SPORT_PROFILES: Dict[str, Dict[str, Any]] = {
     "football": _football_profile(),
-    "soccer": _football_profile(),       # Alias
-    "basketball": _basketball_profile(),
+    "soccer": _football_profile(),            # Alias
+    "basketball": _basketball_profile(),      # NBA default
+    "basketball_nba": _basketball_profile(),
+    "nba": _basketball_profile(),             # Alias
+    "basketball_fiba": _basketball_fiba_profile(),
+    "fiba": _basketball_fiba_profile(),       # Alias
+    "euroleague": _basketball_fiba_profile(), # Alias
+    "vtb": _basketball_fiba_profile(),        # Alias
+    "basketball_ncaa": _basketball_ncaa_profile(),
+    "ncaa": _basketball_ncaa_profile(),       # Alias
+    "ncaa_basketball": _basketball_ncaa_profile(),
+    "college_basketball": _basketball_ncaa_profile(),
     "ice_hockey": _ice_hockey_profile(),
-    "hockey": _ice_hockey_profile(),     # Alias
+    "hockey": _ice_hockey_profile(),          # Alias
     "tennis": _tennis_profile(),
     "table_tennis": _table_tennis_profile(),
+    "ping_pong": _table_tennis_profile(),     # Alias
     "baseball": _baseball_profile(),
+    "mlb": _baseball_profile(),               # Alias
     "american_football": _american_football_profile(),
-    "nfl": _american_football_profile(),  # Alias
+    "nfl": _american_football_profile(),      # Alias
     "rugby": _rugby_profile(),
     "handball": _handball_profile(),
     "volleyball": _volleyball_profile(),
@@ -576,18 +677,38 @@ SPORT_ALIASES: Dict[str, str] = {
     "soccer": "football",
     "hockey": "ice_hockey",
     "nfl": "american_football",
+    "mlb": "baseball",
+    "ping_pong": "table_tennis",
+    "nba": "basketball",
+    "basketball_nba": "basketball",
+    "fiba": "basketball_fiba",
+    "euroleague": "basketball_fiba",
+    "vtb": "basketball_fiba",
+    "ncaa": "basketball_ncaa",
+    "ncaa_basketball": "basketball_ncaa",
+    "college_basketball": "basketball_ncaa",
 }
 
 
-def get_profile(sport: str) -> Dict[str, Any]:
+def get_profile(sport: str, league_format: Optional[str] = None) -> Dict[str, Any]:
     """
     Retrieve sport profile by name. Case-insensitive, supports aliases.
+    Supports optional league_format override (e.g. 'fiba', 'nba', 'ncaa' for basketball).
     Raises ValueError if sport is not recognized.
     """
     key = sport.lower().strip().replace(" ", "_").replace("-", "_")
+
+    # If sport is basketball and a format was requested, redirect
+    if key in ("basketball", "basketball_nba", "nba") and league_format:
+        fmt = league_format.lower().strip()
+        if fmt in ("fiba", "euro", "euroleague", "vtb", "40", "40min", "40_min"):
+            key = "basketball_fiba"
+        elif fmt in ("ncaa", "college", "cbb"):
+            key = "basketball_ncaa"
+        elif fmt in ("nba", "48", "48min", "48_min"):
+            key = "basketball_nba"
+
     if key not in SPORT_PROFILES:
-        available = sorted(set(k for k in SPORT_PROFILES if k not in SPORT_ALIASES.values() or k in SPORT_PROFILES))
-        # Deduplicate: show canonical names only
         canonical = sorted(set(SPORT_ALIASES.get(k, k) for k in SPORT_PROFILES))
         raise ValueError(
             f"Unknown sport: '{sport}'. Available: {', '.join(canonical)}"

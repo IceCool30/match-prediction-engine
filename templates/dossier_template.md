@@ -41,21 +41,23 @@
 **Model Used:** {MODEL_TYPE} *(Bivariate Poisson + Dixon-Coles / Standard Poisson / Normal Distribution)*  
 *Calculated with zero emotional bias based on adjusted offensive and defensive ratings.*
 
-### Match Result
+### Match Result & Market De-vigging
 
-| Market | Outcome | Model Probability | Fair Odds | Market Odds | Expected Value (+EV) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **{RESULT_MARKET}** | {HOME_TEAM} Win | {P_HOME}% | {FAIR_HOME} | {MKT_HOME} | {EV_HOME}% |
-| **{RESULT_MARKET}** | {DRAW_OR_NA} | {P_DRAW}% | {FAIR_DRAW} | {MKT_DRAW} | {EV_DRAW}% |
-| **{RESULT_MARKET}** | {AWAY_TEAM} Win | {P_AWAY}% | {FAIR_AWAY} | {MKT_AWAY} | {EV_AWAY}% |
+*Bookmaker Overround / Margin:* `{VIG_PERCENT}%`
 
-### Over/Under {SCORING_UNIT}
+| Market | Outcome | Model Probability | Fair Odds | Market Odds | De-vigged Market Prob | Expected Value (+EV) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **{RESULT_MARKET}** | {HOME_TEAM} Win | {P_HOME}% | {FAIR_HOME} | {MKT_HOME} | {DEVIG_HOME}% | {EV_HOME}% |
+| **{RESULT_MARKET}** | {DRAW_OR_NA} | {P_DRAW}% | {FAIR_DRAW} | {MKT_DRAW} | {DEVIG_DRAW}% | {EV_DRAW}% |
+| **{RESULT_MARKET}** | {AWAY_TEAM} Win | {P_AWAY}% | {FAIR_AWAY} | {MKT_AWAY} | {DEVIG_AWAY}% | {EV_AWAY}% |
 
-| Line | Over | Under |
-| :--- | :--- | :--- |
-| {OU_LINE_1} | {P_OVER_1}% (Fair: {FAIR_OVER_1}) | {P_UNDER_1}% (Fair: {FAIR_UNDER_1}) |
-| {OU_LINE_2} | {P_OVER_2}% (Fair: {FAIR_OVER_2}) | {P_UNDER_2}% (Fair: {FAIR_UNDER_2}) |
-| {OU_LINE_3} | {P_OVER_3}% (Fair: {FAIR_OVER_3}) | {P_UNDER_3}% (Fair: {FAIR_UNDER_3}) |
+### Audited Over/Under {SCORING_UNIT} & Accumulator Anchor Audit
+
+| Line | Over Prob | Over Odds | Over EV | Under Prob | Under Odds | Under EV | Accumulator Anchor Index (AAI) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **{OU_LINE_1}** | {P_OVER_1}% | {ODDS_O1} | {EV_O1}% | {P_UNDER_1}% | {ODDS_U1} | {EV_U1}% | {AAI_1} |
+| **{OU_LINE_2}** | {P_OVER_2}% | {ODDS_O2} | {EV_O2}% | {P_UNDER_2}% | {ODDS_U2} | {EV_U2}% | {AAI_2} |
+| **{OU_LINE_3}** | {P_OVER_3}% | {ODDS_O3} | {EV_O3}% | {P_UNDER_3}% | {ODDS_U3} | {EV_U3}% | {AAI_3} |
 
 ### Spread / Handicap
 
@@ -84,10 +86,12 @@
 
 ## 4. Final Categorized Selections
 
-### 🟢 Primary Selection (Targeted Focus / Highest Probability Floor)
+### 🟢 Safest Accumulator Anchor (High-Stake Parlay Leg)
 - **Selection:** `{PRIMARY_PICK}`
 - **Market:** `{PRIMARY_MARKET}`
 - **Indicative Odds:** `{PRIMARY_ODDS}`
+- **Survival Probability:** `{PRIMARY_PROB}%`
+- **Accumulator Anchor Index (AAI):** `{AAI_SCORE}/100 ({AAI_TIER})`
 - **Analytical Rationale:** {PRIMARY_RATIONALE}
 
 ### 🟡 Value Selection (+EV / Mispriced Market)
@@ -98,7 +102,7 @@
 - **Analytical Rationale:** {VALUE_RATIONALE}
 
 ### 🎯 Most Probable Outcome / Scoreline
-- **Prediction:** `{OUTCOME_PICK}`
+- **Prediction:** `{OUTCOME_PICK}` ({OUTCOME_PROB}%)
 
 ---
 

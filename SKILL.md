@@ -115,10 +115,15 @@ The engine **never boxes itself into a single market or sport**. It dynamically 
 
 When the user asks for a prediction on any match or fixture in any sport, execute these steps in order.
 
-### Step 1: Intake, Sport Detection & Focus Identification
-- **Detect the sport** from the teams/players mentioned, competition name, or explicit user statement.
+### Step 1: Intake, Sport Detection & Screenshot Processing
+- **Detect the sport & competition** from the teams/players mentioned, competition name, or explicit user statement.
+- **Mobile Screenshot & Slip Intake**:
+  - If the user provides or references a screenshot on their phone or a specific bookmaker app (e.g., SportyBet, Bet9ja, Betway, 1xBet):
+    1. Scan Termux screenshot locations: `/storage/emulated/0/Pictures/Screenshots`, `/storage/emulated/0/Pictures/Screenshot`, `/sdcard/DCIM/Screenshots` using `ls -lt | head -n 5`.
+    2. Inspect the latest image with `view_file` to directly extract the teams, league, kickoff time, Game ID, and **all visible odds and alternative lines** (Over/Under lines, 1st Half lines, handicaps, moneyline).
+    3. Note bookmaker-specific terms (e.g., "incl. overtime", "Draw No Bet", Asian lines).
 - Clarify the fixture: Home team/player, Away team/player, Competition, Date, Venue.
-- Identify the user's focus directive (e.g., general match, spread, totals, player props, accumulator anchor).
+- Identify the user's focus directive (e.g., Accumulator Anchor Mode, High-Stake Bankroll Protection, Value Hunter).
 - Confirm home/away status (neutral venue matches must not use home-advantage weighting).
 - Load the appropriate sport profile to configure the model, markets, and research sources.
 
@@ -145,11 +150,11 @@ Search the sport's public data sources (defined in the sport profile) for:
 - Home/Player 1 recent form: scoring rate, defensive rate, key performance metrics
 - Away/Player 2 recent form: same metrics
 - League/tour average baselines for the sport
-- Current market odds from public odds comparison pages (Oddschecker, OddsPortal)
+- Current market odds from public odds comparison pages (Oddschecker, OddsPortal, SportyBet)
 - **Sport-specific advanced metrics** (see sport profile `key_metrics` list)
 
 ### Step 4: Local Mathematical Modeling
-Run the local calculation script with the detected sport:
+Run the local calculation script with the detected sport, format, and multi-line odds:
 
 **Football (Poisson model — default):**
 ```bash
@@ -157,16 +162,30 @@ python3 /data/data/com.termux/files/home/.agents/skills/match-prediction-engine/
   --sport football \
   --home "<HOME_TEAM>" --away "<AWAY_TEAM>" \
   --home-xg <HOME_XG> --away-xg <AWAY_XG> \
-  --odds-home <H_ODDS> --odds-draw <D_ODDS> --odds-away <A_ODDS>
+  --odds-home <H_ODDS> --odds-draw <D_ODDS> --odds-away <A_ODDS> \
+  --ou-odds "1.5:1.30:3.40,2.5:1.85:1.95,3.5:3.10:1.35"
 ```
 
-**Basketball (Normal model):**
+**Basketball (FIBA / EuroLeague / VTB / 40-Min):**
 ```bash
 python3 /data/data/com.termux/files/home/.agents/skills/match-prediction-engine/scripts/poisson_model.py \
   --sport basketball \
+  --league-format fiba \
   --home "<HOME_TEAM>" --away "<AWAY_TEAM>" \
   --home-xg <HOME_PPG> --away-xg <AWAY_PPG> \
-  --odds-home <H_ODDS> --odds-away <A_ODDS>
+  --odds-home <H_ODDS> --odds-away <A_ODDS> \
+  --ou-odds "154.5:1.43:2.65,160.5:1.80:1.91,166.5:2.40:1.50,168.5:2.70:1.41"
+```
+
+**Basketball (NBA / 48-Min):**
+```bash
+python3 /data/data/com.termux/files/home/.agents/skills/match-prediction-engine/scripts/poisson_model.py \
+  --sport basketball \
+  --league-format nba \
+  --home "<HOME_TEAM>" --away "<AWAY_TEAM>" \
+  --home-xg <HOME_PPG> --away-xg <AWAY_PPG> \
+  --odds-home <H_ODDS> --odds-away <A_ODDS> \
+  --ou-odds "215.5:1.90:1.90,220.5:2.10:1.75"
 ```
 
 **Ice Hockey (Poisson with Dixon-Coles):**
@@ -214,36 +233,41 @@ python3 /data/data/com.termux/files/home/.agents/skills/match-prediction-engine/
   --away-attack <SCORING_RATE> --away-defense <CONCEDE_RATE>
 ```
 
-**Custom over/under lines:**
+**Arbitrary Custom Lines:**
 ```bash
-python3 ... --ou-lines "195.5,200.5,210.5,220.5"
+python3 ... --odds-line "1h_under_82_5:1.64" --odds-line "home_+7_5:1.90"
 ```
 
-### Step 5: Value (+EV) and Risk Synthesis
-- Compare the model's true probability against the bookmaker's implied probability:
-  $$\text{Edge (\%)} = (\text{Model Probability} \times \text{Bookmaker Odds} - 1) \times 100$$
-- If the edge is $> 3\%$, mark the selection as a **Value Bet (+EV)**.
-- Align the output with the user's specific requested focus and sport-appropriate markets.
+### Step 5: De-vigging, Value (+EV), and Accumulator Anchor (AAI) Synthesis
+1. **De-vigging (Market Overround)**:
+   - Calculate bookmaker margin $M = \sum(1/O_i) - 1.0$.
+   - Compute true vig-free market probabilities to eliminate bookmaker bias.
+2. **Expected Value (+EV)**:
+   - Calculate mathematical edge: $\text{Edge (\%)} = (P_{\text{model}} \times \text{Odds} - 1) \times 100$.
+   - Mark as **Value Bet (+EV)** if Edge $> 3.0\%$.
+3. **Accumulator Anchor Index (AAI: 0–100)**:
+   - For users placing high-stake accumulators/parlays, filter to high probability floor options ($P_{\text{model}} \ge 75-80\%$).
+   - Rank picks by AAI score. AAI $\ge 85$ indicates an **Elite Anchor** with deep margin protection.
+   - Reject high-risk underdog plays or uncompensated low-odds road favorites from being recommended as high-stake anchors.
 
 ### Step 6: Deliver the Match Prediction Dossier
 Assemble the analysis using the layout defined in `templates/dossier_template.md`:
-1. **Match Header**: Teams/players, sport, competition, date, venue, Active Focus Lens.
-2. **Context & Availability**: Sport-relevant context (tactical setup for football, pitching matchup for baseball, surface for tennis, etc.).
-3. **Statistical Summary**: Table of sport-specific performance metrics.
-4. **Model Output**: Objective probabilities, fair odds vs market odds for applicable markets.
-5. **Categorized Recommendations**:
-   - Primary Selection (safest statistical floor or user-targeted focus)
-   - Value Selection (+EV pick where odds favor the punter)
-   - Probable Score/Outcome
-6. **Risk Invalidation**: The exact condition that would nullify the logic.
+1. **Executive Decision**: Upfront, binary PLAY or LEAVE verdict.
+2. **Context, Form & Availability**: Tactical setup, starting availability, rest, and venue impact.
+3. **Statistical Summary & H2H Truth**: Verified head-to-head table with past scorelines and totals.
+4. **Mathematical Model & Multi-Line Table**: Full audit of bookmaker odds, devigged probabilities, EV, and AAI scores.
+5. **Final Categorized Selections**:
+   - 🟢 Safest Accumulator Anchor (highest AAI score, high probability floor)
+   - 🟡 Value Selection (highest +EV edge)
+   - 🎯 Most Probable Outcome
+6. **Risk Invalidation**: Specific conditions that would nullify the statistical edge.
 
 ---
 
 ## Non-Negotiable Operational Rules
 
-1. **No Emotional or Brand Bias**: Never pick a team simply because they have a bigger name or stronger brand if their rolling form metrics tell a different story.
-2. **No Invented Numbers**: All scoring rates, advanced metrics, and odds must come from actual search results or calculated directly by the script.
-3. **Account for Motivation**: Beware of dead rubbers, end-of-season rotation, exhibition matches, or situations where a team/player has already secured qualification.
-4. **Discipline Over Volume**: If a match is completely unpredictable due to high rotation, chaotic conditions, or insufficient data, explicitly state "Pass / Low Stake" rather than forcing a high-confidence pick.
-5. **Sport-Appropriate Analysis**: Never apply football-specific concepts (corners, BTTS, clean sheets) to sports where they don't exist. Use the sport profile to determine which markets and metrics are valid.
-6. **Model Selection Integrity**: Use Poisson for low/mid-scoring discrete events, Normal for high-scoring continuous-like distributions. Never force the wrong model onto a sport.
+1. **Facts Only, Zero Slop & Zero Hallucination**: Every single scoring rate, advanced metric, head-to-head scoreline, and bookmaker decimal odd must be verifiable in public records or calculated directly by the local python script. Never invent or hallucinate statistics.
+2. **No Emotional or Brand Bias**: Never pick a team simply because they have a bigger name or stronger reputation if their underlying metrics and travel splits argue otherwise.
+3. **Accumulator Discipline Over Volume**: For high-stake accumulators, capital preservation is the absolute priority. Never recommend a volatile coin-flip or an uncompensated low-odds trap (e.g. 1.20 away moneyline with 20% upset risk) just to give a pick. If the only safe play is an alternative under/over buffer, state that with mathematical clarity.
+4. **Discipline to State "LEAVE"**: If a fixture is completely unpredictable due to heavy rotation, chaotic conditions, or volatile lines, explicitly state "LEAVE / PASS" rather than guessing.
+5. **Sport-Appropriate Modeling**: Respect the sport's scoring physics. Never apply Poisson to high-scoring sports (basketball, NFL) or Normal to low-scoring sports (football, hockey). Use FIBA 40-minute parameters for European/international basketball and NBA 48-minute parameters for NBA games.

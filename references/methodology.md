@@ -166,3 +166,90 @@ A pick is classified as a **value bet** when $\text{EV} \ge 3\%$.
 | Double Chance | ✅ | ✅ | Only for sports with draws |
 | Draw No Bet | ✅ | ✅ | Only for sports with draws |
 | Exact Scoreline | ✅ | ❌ | Matrix-derived, Poisson only |
+
+---
+
+## 7. Proportional De-vigging (Margin Stripping)
+
+Bookmaker odds include an artificial profit margin (the "vig" or overround). To assess true market expectations and avoid false value signals, the engine applies proportional margin stripping:
+
+### Overround / Total Margin
+Given a full market with decimal odds $O_1, O_2, \dots, O_k$:
+$$\text{Margin (\%)} = \left( \sum_{i=1}^k \frac{1}{O_i} - 1 \right) \times 100$$
+
+### True De-vigged Probability
+The fair probability implied by the bookmaker market after stripping the vig is:
+$$P_{\text{devig}, i} = \frac{\frac{1}{O_i}}{\sum_{j=1}^k \frac{1}{O_j}}$$
+
+### Fair Market Odds
+$$\text{Odds}_{\text{fair}, i} = \frac{1}{P_{\text{devig}, i}}$$
+
+The model compares its own independently derived probability $P_{\text{model}}$ against both raw bookmaker odds (for bet payout EV) and de-vigged market probability $P_{\text{devig}}$ (for true informational edge).
+
+---
+
+## 8. Accumulator Anchor Index (AAI: 0–100)
+
+Single-bet value hunting (+EV) is structurally distinct from Accumulator / Parlay Building. In single bets, a 3.50 underdog with +5% EV is an acceptable mathematical play. In a **high-stake accumulator**, an underdog with a 70% failure rate will destroy the ticket.
+
+The engine uses the **Accumulator Anchor Index (AAI)** to evaluate parlay suitability:
+
+### 1. Probability Threshold Gate
+If $P_{\text{model}} < 0.65$, $\text{AAI} = 0.0$ (`UNSUITABLE`). Parlay anchors require high survival floors.
+
+### 2. Base Probability Score
+$$S_{\text{base}} = \begin{cases}
+40.0 + \frac{P - 0.65}{0.10} \times 25.0 & \text{if } 0.65 \le P < 0.75 \\
+65.0 + \frac{P - 0.75}{0.10} \times 23.0 & \text{if } 0.75 \le P < 0.85 \\
+88.0 + \min\left(\frac{P - 0.85}{0.10} \times 12.0, 12.0\right) & \text{if } P \ge 0.85
+\end{cases}$$
+
+### 3. Margin Buffer Bonus
+Lines situated deep in the distribution tails carry statistical buffer against variance:
+$$Z_{\text{buffer}} = \frac{|\text{Line} - \mu|}{\sigma}$$
+$$B_{\text{buffer}} = \min\left(\frac{Z_{\text{buffer}}}{1.5}, 1.0\right) \times 8.0$$
+
+### 4. Market EV Adjustment
+$$A_{\text{EV}} = \begin{cases}
+\min(\text{EV} \times 0.4, 8.0) & \text{if } \text{EV} > 0 \\
+\max(-10.0, (\text{EV} + 5.0) \times 0.5) & \text{if } \text{EV} < -5.0 \\
+0.0 & \text{otherwise}
+\end{cases}$$
+
+### 5. Final Score & Classification
+$$\text{AAI} = \text{clamp}(S_{\text{base}} + B_{\text{buffer}} + A_{\text{EV}}, 0, 100)$$
+
+| AAI Score | Classification | Action for High-Stake Accumulators |
+|:---:|:---|:---|
+| **85 – 100** | 🟢 **ELITE ANCHOR** | Top-tier capital protection; statistical floor $\ge 80\%$, verified buffer. Approved for maximum stake. |
+| **72 – 84** | 🟢 **STRONG ANCHOR** | Reliable probability floor $\ge 75\%$, positive or fair market expectancy. |
+| **60 – 71** | 🟡 **VIABLE LEG** | Acceptable for low/moderate stake multis, but carries measurable tail risk. |
+| **< 60** | 🔴 **SPECULATIVE** | Reject as parlay anchor. High risk of ticket bust. |
+
+---
+
+## 9. Multi-Format Basketball Modeling
+
+Basketball cannot be treated with a single 48-minute baseline:
+
+| Format | Regulation Time | Typical Total Points | Team PPG Average | Over/Under Baseline Lines | Key Competitions |
+|:---|:---:|:---:|:---:|:---:|:---|
+| **NBA** | 48 mins (4×12) | 215 – 230 | 110 – 115 | `195.5 – 225.5` | NBA, NBA G-League |
+| **FIBA / Euro** | 40 mins (4×10) | 150 – 165 | 75 – 83 | `148.5 – 172.5` | EuroLeague, EuroCup, VTB, ACB Spain, BBL, Olympics |
+| **NCAA (CBB)** | 40 mins (2×20) | 135 – 148 | 67 – 74 | `132.5 – 152.5` | NCAA Men's College Basketball |
+
+The engine accepts `--league-format fiba` (or aliases `euroleague`, `vtb`) to instantly load FIBA parameters, preventing massive over-estimation of totals.
+
+---
+
+## 10. Derivative Period Splits (1st Half / 2nd Half)
+
+Empirical period scoring distributions differ from simple halves:
+* **Football (Soccer):**
+  * 1st Half: $\approx 45\%$ of full-time xG ($xG_{1H} = 0.45 \times xG_{FT}$)
+  * 2nd Half: $\approx 55\%$ of full-time xG (substitutions, tactical opening, late fatigue)
+* **Basketball:**
+  * 1st Half: $\approx 48.5\%$ of full-time points
+  * Standard deviation: $\sigma_{1H} = \sigma_{FT} \times \sqrt{0.485} \approx 0.70 \times \sigma_{FT}$
+  * 2nd Half: $\approx 51.5\%$ of full-time points (due to late-game tactical intentional fouls and free throw frequency)
+
